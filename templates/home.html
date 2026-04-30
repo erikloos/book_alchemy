@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{{ url_for ('static', filename='style.css') }}"/>
+
   </head>
   <body>
     <a href="/?sort=title"><button>By Title</button></a>
@@ -15,15 +17,24 @@
       <input type="text" name="search" placeholder="Search title">
       <button type="submit">Search</button>
     </form>
+    <div>
+    <ol class="book-grid">
     {% for book, author in books %}
-    <div> <h3>{{ book.title }}</h3>
-          <p>{{author.name}}</p>
-          <img src="https://covers.openlibrary.org/b/isbn/{{ book.isbn }}-M.jpg">
-          <form method='POST' action="/book/{{ book.id }}/delete">
+    <li>
+      <div class="book">
+        <img class="book-cover" src="https://covers.openlibrary.org/b/isbn/{{ book.isbn }}-M.jpg">
+        <div class="book-title">{{ book.title }}</div>
+        <div class="book-author">{{author.name}}</div>
+
+
+      <form method='POST' action="/book/{{ book.id }}/delete">
             <button type="submit">Delete book</button>
           </form>
     </div>
-    {% endfor %}
+    </li>
 
-  </body>
+    {% endfor %}
+    </ol>
+    </div>
+    </body>
 </html>
