@@ -1,9 +1,7 @@
-from flask import Flask, request, render_template, jsonify
-from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, request, render_template, jsonify, redirect, url_for
 from datetime import datetime
 from data_models import db, Author, Book
 import os
-import requests
 
 
 
@@ -14,9 +12,12 @@ db.init_app(app)
 
 @app.route('/', methods = ['GET'])
 def home():
+    search = request.args.get('search')
     sort_by = request.args.get('sort')
     query = db.session.query(Book, Author) \
         .join(Author, Book.author_id == Author.id)
+    if search:
+        query = query.filter(Book.title.like(f"%{search}%"))
 
     if sort_by == "title":
         query = query.order_by(Book.title.asc())
@@ -27,7 +28,6 @@ def home():
     books = query.all()
 
     return render_template('home.html', books=books)
-
 
 
 @app.route('/add_author', methods = ['GET', 'POST'])
@@ -57,7 +57,7 @@ def add_author():
         except Exception:
             db.session.rollback()
             return jsonify("Database error"), 500
-        return jsonify("Author was added successfully."), 201
+        return redirect(url_for('home', message="Author successfully added"))
 
 
 @app.route('/add_book', methods = ['GET', 'POST'])
@@ -88,7 +88,37 @@ def add_book():
             print(f"Error: {str(e)}")
             return jsonify(f"Database error: {str(e)}"), 500
 
-        return jsonify("Book was added successfully."), 201
+        return redirect(url_for('home', message="Book successfully added"))
+
+@app.route('/book/<int:book_id>/delete', methods = ['POST'])
+def delete_book(book_id):
+    try:
+        book = db.session.query(Book).filter(Book.id == book_id).first()
+        if book is None:
+            return redirect(url_for('home', message="Book could not be found"))
+        author_id = book.author_id
+
+        db.session.delete(book)
+        db.session.commit()
+
+        remaining_books = db.session.query(Book)\
+            .filter(Book.author_id == author_id)\
+            .count()
+
+        if remaining_books == 0:
+            author = db.session.query(Author).filter(author_id == Author.id).first()
+            db.session.delete(author)
+            db.session.commit()
+
+    except ValueError:
+        return jsonify("Book could not deleted"), 400
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error: {str(e)}")
+        return jsonify(f"Database error: {str(e)}"), 500
+
+    return redirect(url_for('home', message="Book successfully deleted"))
 
 
 # Creat table in database
