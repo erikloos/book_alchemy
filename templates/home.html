@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  </head>
+  <body>
+  <a href="/?sort=title"><button>By Title</button></a>
+    <a href="/?sort=author"><button>By Author</button></a>
+    {% for book, author in books %}
+    <div> <h3>{{ book.title }}</h3>
+          <p>{{author.name}}</p>
+          <img src="https://covers.openlibrary.org/b/isbn/{{ book.isbn }}-M.jpg">
+    </div>
+    {% endfor %}
+
+  </body>
+</html>

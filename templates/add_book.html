@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  </head>
+  <body>
+
+  <form action="/add_book" method="POST">
+  <label for="title">Book Name:</label>
+  <input type="text" id="title" name="title" required><br><br>
+
+  <label for="ISBN">ISBN:</label>
+  <input type="text" id="ISBN" name="ISBN" required><br><br>
+  <label for="Publication_year">Publication_year:</label>
+  <input type="text" id="publication_year" name="publication_year"><br><br>
+
+  <label for="authors">Choose author:</label>
+  <select id="authors" name="authors">
+    {% for author in authors %}
+    <option value="{{ author.id }}">{{ author.name }}</option>
+    {% endfor %}
+    <input type="submit" value="Add Book">
+  </select>
+  </form>
+
+  </body>
+</html>
