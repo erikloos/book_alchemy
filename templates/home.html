@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="{{ url_for ('static', filename='style.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css')}}"/>
 
   </head>
   <body>
@@ -18,23 +18,25 @@
       <button type="submit">Search</button>
     </form>
     <div>
-    <ol class="book-grid">
-    {% for book, author in books %}
-    <li>
-      <div class="book">
-        <img class="book-cover" src="https://covers.openlibrary.org/b/isbn/{{ book.isbn }}-M.jpg">
-        <div class="book-title">{{ book.title }}</div>
-        <div class="book-author">{{author.name}}</div>
+    {% if books %}
+      <ol class="book-grid">
+      {% for book, author in books %}
+      <li>
+        <div class="book">
+          <img class="book-cover" src="https://covers.openlibrary.org/b/isbn/{{ book.isbn }}-M.jpg">
+          <div class="book-title">{{ book.title }}</div>
+          <div class="book-author">{{author.name}}</div>
 
-
-      <form method='POST' action="/book/{{ book.id }}/delete">
-            <button type="submit">Delete book</button>
-          </form>
+        <form method='POST' action="/book/{{ book.id }}/delete">
+              <button type="submit">Delete book</button>
+        </form>
     </div>
     </li>
-
-    {% endfor %}
+        {% endfor %}
     </ol>
+    {% else %}
+      <p>No books found</p>
+    {% endif %}
     </div>
     </body>
 </html>
